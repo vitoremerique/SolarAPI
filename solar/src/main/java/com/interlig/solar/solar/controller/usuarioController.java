@@ -47,10 +47,10 @@ public class usuarioController {
         }
     }
 
-    @GetMapping("/cpf/{cpf}")
-    public ResponseEntity<Usuario> buscarPorNome(@PathVariable String cpf){
+    @GetMapping("/nome/{nome}")
+    public ResponseEntity<Usuario> buscarPorNome(@PathVariable String nome){
 
-            Usuario usuario = usuarioService.BuscarPorCPF(cpf);
+            Usuario usuario = usuarioService.BuscarPorCPF(nome);
             if (usuario !=null) {
                 return ResponseEntity.status(HttpStatus.OK).body(usuario);
             } else {

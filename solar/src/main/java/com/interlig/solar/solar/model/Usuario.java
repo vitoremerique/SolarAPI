@@ -1,8 +1,8 @@
 package com.interlig.solar.solar.model;
 
 import jakarta.persistence.*;
-import lombok.*;
 import org.antlr.v4.runtime.misc.NotNull;
+import org.hibernate.annotations.NotFound;
 
 
 @Entity
@@ -12,7 +12,7 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long usuario_id;
 
-    @Column(nullable = false, length = 50) // Define limite no banco de dados
+   @NotFound // Define limite no banco de dados
     private String nome;
 
 

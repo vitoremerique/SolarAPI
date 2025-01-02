@@ -16,6 +16,7 @@ public class usuarioService implements usuarioServiceInterface{
 
     @Override
     public Optional<Usuario> CriarUsuario(Usuario user) {
+
         repository.save(user);
         return repository.findById(user.getUsuario_id());
     }
