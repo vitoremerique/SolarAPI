@@ -2,12 +2,15 @@ package com.interlig.solar.solar.controller;
 
 
 import com.interlig.solar.solar.model.Usuario;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import com.interlig.solar.solar.service.usuarioService;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -17,17 +20,25 @@ public class usuarioController {
     @Autowired
     private usuarioService usuarioService;
 
+    @GetMapping
+    public ResponseEntity<List<Usuario>> listarTodos(){
+        List<Usuario> lista = usuarioService.listarTodos();
+
+        if(lista.isEmpty()){
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.ok().body(lista);
+    }
+
 
     @PostMapping
-    public ResponseEntity<Optional<Usuario>> criarUsuario(@RequestBody Usuario usuario) {
-        try {
-            Optional<Usuario> usuarioCriado = usuarioService.CriarUsuario(usuario);
-            return ResponseEntity.status(HttpStatus.CREATED).body(usuarioCriado);
-        } catch (Exception e) {
-            // Logar o erro para depuração
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    public ResponseEntity<Optional<Usuario>> criarUsuario(@RequestBody @Valid Usuario usuario) {
+        if(this.usuarioService.BuscarPorCPF(usuario.getCpf())!= null) return ResponseEntity.badRequest().build();
+        String encryptedPassword = new BCryptPasswordEncoder().encode(usuario.getPassword());
+        usuario.setSenha(encryptedPassword);
+        usuarioService.CriarUsuario(usuario);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
@@ -57,6 +68,8 @@ public class usuarioController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
     }
+
+
 
 
     @PatchMapping("/alterar/{id}")

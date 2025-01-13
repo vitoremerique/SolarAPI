@@ -1,24 +1,27 @@
 package com.interlig.solar.solar.model;
 
 import jakarta.persistence.*;
-import org.antlr.v4.runtime.misc.NotNull;
-import org.hibernate.annotations.NotFound;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
+import java.util.List;
 
 @Entity
-@Table (name = "usuario")
-public class Usuario {
+@Table(name = "usuario")
+public class Usuario implements UserDetails {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Geração automática do ID
     private Long usuario_id;
 
-   @NotFound // Define limite no banco de dados
     private String nome;
 
-
     @NotNull
-    @Column(name = "cpf")
-    private String CPF;
+    @Column(name = "cpf", unique = true)
+    private String cpf;
 
     @Column(unique = true, length = 100)
     private String email;
@@ -27,22 +30,80 @@ public class Usuario {
     private String senha;
 
     @Enumerated(EnumType.STRING)
-    private Rule rule;
+    private Role role;
 
     @Column(length = 15)
     private String telefone;
 
-    public Usuario(){}
+    public Usuario() {}
 
-    public Usuario(Long usuario_id, String nome, String CPF, String email, String senha, Rule rule, String telefone) {
-        this.usuario_id = usuario_id;
+    public Usuario(String nome, String cpf, String email, String senha, Role role, String telefone) {
         this.nome = nome;
-        this.CPF = CPF;
+        this.cpf = cpf;
         this.email = email;
         this.senha = senha;
-        this.rule = rule;
+        this.role = role;
         this.telefone = telefone;
     }
+
+    public Usuario(Long usuario_id, String nome, String cpf, String email, String senha, Role role, String telefone) {
+        this.usuario_id = usuario_id;
+        this.nome = nome;
+        this.cpf = cpf;
+        this.email = email;
+        this.senha = senha;
+        this.role = role;
+        this.telefone = telefone;
+    }
+
+    // Getters and Setters
+    public Long getUsuario_id() {
+        return usuario_id;
+    }
+
+    public void setUsuario_id(Long usuario_id) {
+        this.usuario_id = usuario_id;
+    }
+
+    // Implementação dos métodos do UserDetails
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        if(this.role == Role.ADMIN)
+            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+        else
+            return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+    }
+
+    @Override
+    public String getPassword() {
+        return this.senha;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.cpf;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
 
     public String getNome() {
         return nome;
@@ -52,12 +113,12 @@ public class Usuario {
         this.nome = nome;
     }
 
-    public String getCPF() {
-        return CPF;
+    public String getCpf() {
+        return cpf;
     }
 
-    public void setCPF(String CPF) {
-        this.CPF = CPF;
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
     public String getEmail() {
@@ -76,12 +137,12 @@ public class Usuario {
         this.senha = senha;
     }
 
-    public Rule getRule() {
-        return rule;
+    public Role getRole() {
+        return role;
     }
 
-    public void setRule(Rule rule) {
-        this.rule = rule;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public String getTelefone() {
@@ -90,13 +151,5 @@ public class Usuario {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
-    }
-
-    public Long getUsuario_id() {
-        return usuario_id;
-    }
-
-    public void setUsuario_id(Long usuario_id) {
-        this.usuario_id = usuario_id;
     }
 }

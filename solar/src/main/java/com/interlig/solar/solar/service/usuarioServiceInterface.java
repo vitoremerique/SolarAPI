@@ -2,6 +2,7 @@ package com.interlig.solar.solar.service;
 
 import com.interlig.solar.solar.model.Usuario;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface usuarioServiceInterface {
@@ -10,6 +11,7 @@ public interface usuarioServiceInterface {
     Usuario BuscarPorCPF(String CPF);
     Usuario AtualizarUsuario(Long id,Usuario user);
     Optional<Usuario> BuscarPorId(Long id);
+    List<Usuario> listarTodos();
 
 }
 

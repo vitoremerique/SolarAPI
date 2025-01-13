@@ -6,6 +6,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -28,7 +29,7 @@ public class usuarioService implements usuarioServiceInterface{
 
     @Override
     public Usuario BuscarPorCPF(String CPF) {
-        return repository.findByCPF(CPF);
+        return repository.buscarCPF(CPF);
     }
 
     @Override
@@ -38,10 +39,10 @@ public class usuarioService implements usuarioServiceInterface{
 
         // Atualiza os campos usando operador ternário
         usuarioExistente.setNome(usuarioAtualizado.getNome() != null ? usuarioAtualizado.getNome() : usuarioExistente.getNome());
-        usuarioExistente.setCPF(usuarioAtualizado.getCPF() != null ? usuarioAtualizado.getCPF() : usuarioExistente.getCPF());
+        usuarioExistente.setCpf(usuarioAtualizado.getCpf() != null ? usuarioAtualizado.getCpf() : usuarioExistente.getCpf());
         usuarioExistente.setEmail(usuarioAtualizado.getEmail() != null ? usuarioAtualizado.getEmail() : usuarioExistente.getEmail());
         usuarioExistente.setSenha(usuarioAtualizado.getSenha() != null ? usuarioAtualizado.getSenha() : usuarioExistente.getSenha());
-        usuarioExistente.setRule(usuarioAtualizado.getRule() != null ? usuarioAtualizado.getRule() : usuarioExistente.getRule());
+        usuarioExistente.setRole(usuarioAtualizado.getRole() != null ? usuarioAtualizado.getRole() : usuarioExistente.getRole());
         usuarioExistente.setTelefone(usuarioAtualizado.getTelefone() != null ? usuarioAtualizado.getTelefone() : usuarioExistente.getTelefone());
 
         // Salva as alterações no banco de dados
@@ -52,5 +53,10 @@ public class usuarioService implements usuarioServiceInterface{
     @Override
     public Optional<Usuario> BuscarPorId(Long id) {
         return repository.findById(id);
+    }
+
+    @Override
+    public List<Usuario> listarTodos() {
+        return repository.findAll();
     }
 }
